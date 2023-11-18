@@ -1,0 +1,31 @@
+version: '3'
+services:
+  java-srv:
+    build: py-srv
+    command: sh -c "/wait && sleep 90 && python3 app.py"
+    environment:
+      - COUCHBASE_ADMINISTRATOR_USERNAME=${USERNAME}
+      - COUCHBASE_ADMINISTRATOR_PASSWORD=${PASSWORD}
+      - COUCHBASE_BUCKET=${BUCKET}
+      - COUCHBASE_COLLECTION=vehicle
+      - WAIT_HOSTS=db:8091
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+
+  
+  db_seed:
+    image: couchbase
+    command: /bin/sh -c "./workspace/configure.sh"
+    volumes:
+      - ./db:/workspace
+    environment:
+      - COUCHBASE_ADMINISTRATOR_USERNAME=${USERNAME}
+      - COUCHBASE_ADMINISTRATOR_PASSWORD=${PASSWORD}
+      - COUCHBASE_BUCKET=${BUCKET}
+      - COUCHBASE_BUCKET_PASSWORD=f245b655c9da
+
+  db:
+    image: couchbase
+    ports:
+      - 8091
